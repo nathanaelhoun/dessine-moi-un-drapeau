@@ -20,7 +20,7 @@ for (const p of pixelsDepartement) {
 
 	const wantedColor = "#D09E3C";
 
-	const currentColor = p.hexColor; // await getColorPixel(p);
+	const currentColor = p.hexColor;
 	if (currentColor === wantedColor) {
 		console.info(`good color ${currentColor}!`.green);
 		continue;
@@ -42,17 +42,6 @@ for (const p of pixelsDepartement) {
 // ----------------------------------------------------------------------------
 function timer(ms) {
 	return new Promise((res) => setTimeout(res, ms));
-}
-
-async function getColorPixel(pixel) {
-	const { data: updatedPixel } = await axios.get(
-		"https://api.codati.ovh/pixels/",
-		{
-			params: { x: pixel.x, y: pixel.y },
-		}
-	);
-
-	return updatedPixel.hexColor;
 }
 
 async function updatePixel(pixel, newColor) {
