@@ -1,0 +1,19 @@
+{
+  "name": "dessine-moi-un-drapeau",
+  "version": "1.0.0",
+  "description": "Pour dessiner un motif sur le drapeau du DirtyBiologystan. ",
+  "main": "index.js",
+  "scripts": {
+    "initialize": "mkdir -p data && for SCRIPT in scrap-data/*; do echo \"Running $SCRIPT\"; node $SCRIPT; done",
+    "update-data": "node initialize/1-update-pixel-list.js",
+    "start": "node index.js",
+    "test": "echo \"M.D.R. des tests pour ça ?\" && exit 1"
+  },
+  "author": "Nathanaël Houn <contact@nathanaelhoun.fr>",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "colors": "^1.4.0"
+  },
+  "type": "module"
+}
