@@ -10,8 +10,18 @@ Première fois :
 
 1. Installe les dépendances avec `npm install` ([nodeJS v16 testé uniquement](https://nodejs.org/))
 2. Personnalise le script `initialize/1-update-pixel-list.js` pour récupérer les pixels de la bonne zone (utilise [l'API de CoDaTi](https://codati.ovh/), merci à lui !)
-3. Récupérer les données avec `npm run initialize` (pour éviter des requêtes et alléger le serveur)
-4. Créer un fichier `.env.json` avec la structure suivante :
+3. Crée le fichier `./data/image-colors.json`, au format ressorti par [le programme de @STM3900](https://github.com/STM3900/imgAnalyser).
+   ```json
+   [
+      {
+         "#d09e3c": [ "x1:y1", "x2:y2" ],
+         "#bababa": [ "x3:y3" ],
+         // ...
+      }
+   ]
+   ```
+4. Récupérer les données avec `npm run initialize` (pour éviter des requêtes et alléger le serveur)
+5. Créer un fichier `.env.json` avec la structure suivante :
    ```json
    {
    	"tokens": ["token_drapeau"]
