@@ -1,43 +1,48 @@
 import axios from "axios";
 import fs from "fs";
-import colors from "colors";
+import "colors";
 
 const env = JSON.parse(fs.readFileSync(".env.json"));
 const logfile = env["logfile"] ?? "./journal.log";
 
 const tokens = env["tokens"];
 
-const pixelsDepartement = JSON.parse(
-	fs.readFileSync("./data/desert-de-lest-pixels.json")
-);
-const mapEntityIds = JSON.parse(
-	fs.readFileSync("./data/indexInFlagToEntityId.json")
-);
+const pixelsDepartement = JSON.parse(fs.readFileSync("./data/desert-de-lest-pixels.json"));
+const mapEntityIds = JSON.parse(fs.readFileSync("./data/indexInFlagToEntityId.json"));
 
-for (const p of pixelsDepartement) {
+for (let i = 0; i < pixelsDepartement.length; i++) {
+	const p = pixelsDepartement[i];
+	
 	await timer(0.01); // Just for fun
-	process.stdout.write(`Checking pixel [${p.x},${p.y}] of ${p.pseudo}: `);
+	process.stdout.write(`(${String(i).padStart(`${pixelsDepartement.length}`.length)}/${pixelsDepartement.length}) `);
+	process.stdout.write(`[${p.x},${p.y}] ${p.pseudo}: `);
 
 	const wantedColor = "#D09E3C";
 
 	const currentColor = p.hexColor;
 	if (currentColor === wantedColor) {
-		console.info(`good color ${currentColor}!`.green);
+		console.info(`bonne couleur ${currentColor}!`.green);
 		continue;
 	}
 
-	if (wantedColor == await getColorPixel(p)) {
-		console.info(`good color ${currentColor}! (but think to npm run update-data sometimes)`.green);
+	if (wantedColor == (await getColorPixel(p))) {
+		console.info(
+			`bonne couleur ${currentColor}!`.green +
+			"(mais pense à 'npm run update-data' de temps en temps)".brightGreen
+		);
 		continue;
 	}
 
-	console.info(`bad color (${currentColor} instead of ${wantedColor}).`.yellow);
-	process.stdout.write(" → Updating... ".cyan);
+	console.info(`mauvaise couleur (${currentColor} au lieu de ${wantedColor}).`.yellow);
+	process.stdout.write(" → Changement... ".cyan);
 	const answerStatus = await updatePixel(p, wantedColor);
 	if (answerStatus != 201) {
-		console.info("Done!".green);
+		console.info("C'est bon !".green);
 	} else {
-		console.info(`Error (status ${answerStatus}), check journal.log file`.red);
+		console.info(
+			`Erreur (statut ${answerStatus}), vérifie le fichier journal.log et contacte le développeur`
+				.red
+		);
 	}
 }
 
@@ -50,12 +55,9 @@ function timer(ms) {
 }
 
 async function getColorPixel(pixel) {
-	const { data: updatedPixel } = await axios.get(
-		"https://api.codati.ovh/pixels/",
-		{
-			params: { x: pixel.x, y: pixel.y },
-		}
-	);
+	const { data: updatedPixel } = await axios.get("https://api.codati.ovh/pixels/", {
+		params: { x: pixel.x, y: pixel.y },
+	});
 
 	return updatedPixel.hexColor;
 }
@@ -72,11 +74,7 @@ async function updatePixel(pixel, newColor) {
 		const config = { headers: { Authorization: remainingTokens[0] } };
 
 		try {
-			const answer = await axios.put(
-				"https://api-flag.fouloscopie.com/pixel",
-				request,
-				config
-			);
+			const answer = await axios.put("https://api-flag.fouloscopie.com/pixel", request, config);
 
 			return answer.status;
 		} catch (err) {
@@ -84,13 +82,15 @@ async function updatePixel(pixel, newColor) {
 				const cooldown = err.response.data.retryAfter + 200;
 
 				if (remainingTokens.length > 1) {
-					process.stdout.write(`Cooldown of ${cooldown}, trying with another token...`.cyan);
-					remainingTokens = remainingTokens.slice(1)
+					console.info(
+						`Cooldown de ${cooldown / 1000}s, on essaie avec une autre token... `.cyan
+					);
+					remainingTokens = remainingTokens.slice(1);
 					continue;
 				}
 
 				// Waiting and retrying
-				process.stdout.write(`No other token, waiting ${cooldown} for cooldown...`.cyan);
+				process.stdout.write(`   Nope! Pas d'autre token, on attend ${cooldown / 1000}s...`.cyan);
 				await timer(cooldown);
 
 				try {
