@@ -35,7 +35,7 @@ for (let i = 0; i < pixelsDepartement.length; i++) {
 
 	await timer(0.01); // Just for fun
 	process.stdout.write(
-		`(${String(i).padStart(`${pixelsDepartement.length}`.length)}/${pixelsDepartement.length}) `
+		`(${String(i + 1).padStart(`${pixelsDepartement.length}`.length)}/${pixelsDepartement.length}) `
 	);
 	process.stdout.write(`[${p.x},${p.y}] ${p.pseudo}: `);
 
