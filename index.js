@@ -25,9 +25,13 @@ console.info(
 	} pixels de couleur, ce qui prendra ${(countTotalToChange / tokens.length) * 2} minutes`
 );
 
+// Ajout de la disposition aléatoire
+let randomArrayOrder = [...Array(pixelsDepartement.length).keys()];
+randomArrayOrder.sort(() => Math.random() - 0.5);
+
 for (let i = 0; i < pixelsDepartement.length; i++) {
-	const p = pixelsDepartement[i];
-	const wantedColor = mapColors[p.x][p.y]?.toLowerCase();
+  	const p = pixelsDepartement[randomArrayOrder[i]];
+  	const wantedColor = mapColors[p.x][p.y]?.toLowerCase();
 
 	await timer(0.01); // Just for fun
 	process.stdout.write(
