@@ -6,6 +6,7 @@
   "scripts": {
     "initialize": "mkdir -p data && for SCRIPT in initialize/*.js; do echo \"Running $SCRIPT\"; node $SCRIPT; done",
     "update-data": "node initialize/1-update-pixel-list.js",
+    "count-diffs": "node initialize/4-count-diffs.js --only-count",
     "start": "node index.js",
     "test": "echo \"M.D.R. des tests pour ça ?\" && exit 1"
   },
